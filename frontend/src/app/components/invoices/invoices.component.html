@@ -1,0 +1,84 @@
+<div class="animate-slide-up">
+  <h1 class="title-gradient mb-4">Área de Faturamento</h1>
+  
+  <div class="glass-panel p-6 mb-6">
+    <h2 class="text-lg font-semibold mb-4 text-primary">Abrir Nova Nota Fiscal</h2>
+    
+    <form [formGroup]="invoiceForm" (ngSubmit)="onSubmit()">
+      <div formArrayName="items">
+        <div *ngFor="let item of items.controls; let i=index" [formGroupName]="i" class="form-grid mb-4">
+          <div class="form-group span-2">
+            <label>Produto</label>
+            <select formControlName="product_code" class="form-control">
+              <option value="" disabled selected>Selecione o produto...</option>
+              <option *ngFor="let p of products" [value]="p.code">{{ p.code }} (Saldo Atualizado: {{ p.balance }})</option>
+            </select>
+          </div>
+          
+          <div class="form-group">
+            <label>Quantidade</label>
+            <input type="number" formControlName="quantity" class="form-control" min="1">
+          </div>
+          
+          <div class="form-group align-end">
+            <button type="button" class="btn btn-danger" (click)="removeItem(i)" *ngIf="items.length > 1">
+              ✖
+            </button>
+          </div>
+        </div>
+      </div>
+      
+      <div class="flex-actions mt-4">
+        <button type="button" class="btn btn-secondary" (click)="addItem()">+ Adicionar Produto</button>
+        <button type="submit" class="btn btn-primary" [disabled]="invoiceForm.invalid || isSubmitting || items.length === 0">
+          <div *ngIf="isSubmitting" class="spinner"></div>
+          {{ isSubmitting ? 'Gerando Nota...' : 'Abrir Nota Fiscal' }}
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <div class="glass-panel overflow-hidden">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Série NF</th>
+          <th>Status</th>
+          <th>Detalhamento</th>
+          <th>Ações</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let inv of invoices">
+          <td class="font-bold text-lg">#{{ (inv.number || inv.id) | number:'3.0-0' }}</td>
+          <td>
+            <span class="badge" [class.badge-open]="inv.status === 'Aberta'" [class.badge-closed]="inv.status === 'Fechada'">
+               {{ inv.status | uppercase }}
+            </span>
+          </td>
+          <td class="text-secondary text-sm">
+            <div *ngFor="let gItem of inv.items">
+              • {{ gItem.quantity }} und(s) de {{ gItem.product_code }}
+            </div>
+          </td>
+          <td>
+            <button class="btn btn-print" 
+                    [disabled]="inv.status !== 'Aberta' || printProcessing[inv.id || 0]" 
+                    (click)="printInvoice(inv)"
+                    [class.loading]="printProcessing[inv.id || 0]">
+              <div *ngIf="printProcessing[inv.id || 0]" class="spinner"></div>
+              {{ printProcessing[inv.id || 0] ? 'Processando DB...' : '🖨️ Imprimir Nota' }}
+            </button>
+          </td>
+        </tr>
+        <tr *ngIf="invoices.length === 0">
+          <td colspan="4" class="text-center py-4 text-secondary">Nenhuma nota fisca foi aberta. Crie sua primeira nota!</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div *ngIf="toastMsg" class="toast" [class.error]="isErrorToast" [class.success]="!isErrorToast">
+  {{ toastMsg }}
+</div>
