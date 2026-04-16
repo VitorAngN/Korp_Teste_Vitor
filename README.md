@@ -1,8 +1,9 @@
-# Sistema de Emissão de Notas Fiscais (Microsserviços) 🚀
+# Sistema de Emissão de Notas Fiscais (Microsserviços) 
 
 Este projeto foi desenvolvido focado em alta disponibilidade, resiliência e Design UI premium. A aplicação adota a arquitetura de **Microsserviços em Golang** interconectados com um front-end moderno em **Angular**. 
 
 > Solução para o Teste Técnico Korp focado na gestão isolada de Estoque e Faturamento.
+> Link para o video detalhando o projeto: https://youtu.be/vij8uouVOGg
 
 
 ## 🔮 Stack Tecnológico
@@ -13,7 +14,7 @@ Este projeto foi desenvolvido focado em alta disponibilidade, resiliência e Des
 - **Deploy Local:** Docker & Docker Compose
 
 
-## 🚀 Como Rodar o Projeto
+## Como Rodar o Projeto
 
 Você precisa do **Docker** e do **Go** instalados na sua máquina.
 
