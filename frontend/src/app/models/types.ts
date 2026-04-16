@@ -16,4 +16,5 @@ export interface Invoice {
     number?: number;
     status: 'Aberta' | 'Fechada';
     items: InvoiceItem[];
+    created_at?: string;
 }

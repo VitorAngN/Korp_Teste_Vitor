@@ -3,12 +3,12 @@
   min-height: 100vh;
   gap: 2rem;
   padding: 2rem;
-  max-width: 1400px;
-  margin: 0 auto;
 }
 
 .sidebar {
-  width: 250px;
+  width: 220px;
+  min-width: 220px;
+  flex-shrink: 0;
   padding: 2rem 1rem;
   display: flex;
   flex-direction: column;
@@ -49,5 +49,7 @@
 
 .content {
   flex: 1;
-  width: 100%;
+  min-width: 0;
+  max-width: 1100px;
 }
+

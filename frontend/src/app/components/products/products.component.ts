@@ -41,6 +41,29 @@ export class ProductsComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
+  isGeneratingMagic = false;
+
+  generateMagic() {
+    const code = this.productForm.get('code')?.value;
+    if (!code) {
+      this.showToast('Preencha o Código do produto antes de chamar a Inteligência Artificial!', true);
+      return;
+    }
+    
+    this.isGeneratingMagic = true;
+    this.api.generateDescriptionAI(code).subscribe({
+      next: (res) => {
+        this.productForm.patchValue({ description: res.description });
+        this.isGeneratingMagic = false;
+        this.showToast('✨ Descrição gerada por IA com sucesso!');
+      },
+      error: (err) => {
+        this.isGeneratingMagic = false;
+        this.showToast('Erro ao gerar IA: ' + err.message, true);
+      }
+    });
+  }
+
   onSubmit() {
     if (this.productForm.invalid) return;
     

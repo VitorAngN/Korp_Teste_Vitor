@@ -7,6 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/vitor/stock-service/database"
 	"github.com/vitor/stock-service/models"
+	"gorm.io/gorm"
 )
 
 func CreateProduct(c *gin.Context) {

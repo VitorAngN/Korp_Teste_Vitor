@@ -20,11 +20,17 @@ type DecrementRequest struct {
 }
 
 // DecrementStock sends an HTTP request to Stock microservice with Retry resiliency
-func DecrementStock(items []StockItem) error {
+func DecrementStock(items []StockItem, simulateFailure bool) error {
 	stockServiceURL := os.Getenv("STOCK_SERVICE_URL")
 	if stockServiceURL == "" {
 		stockServiceURL = "http://localhost:8081"
 	}
+	
+	if simulateFailure {
+	    // Aponta para uma porta morta propositalmente para forçar o retry e a falha simulada
+	    stockServiceURL = "http://localhost:9999"
+	}
+	
 	url := fmt.Sprintf("%s/api/products/decrement", stockServiceURL)
 
 	reqBody := DecrementRequest{Items: items}

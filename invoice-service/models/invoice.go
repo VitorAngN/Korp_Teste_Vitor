@@ -5,7 +5,7 @@ import "time"
 // Invoice model for Faturamento
 type Invoice struct {
 	ID        uint          `gorm:"primaryKey" json:"id"`
-	Number    int           `gorm:"autoIncrement;uniqueIndex" json:"number"`
+	Number    int           `gorm:"uniqueIndex" json:"number"`
 	Status    string        `gorm:"not null;default:'Aberta'" json:"status"`
 	Items     []InvoiceItem `gorm:"foreignKey:InvoiceID" json:"items"`
 	CreatedAt time.Time     `json:"created_at"`

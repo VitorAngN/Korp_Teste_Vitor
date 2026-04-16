@@ -39,6 +39,7 @@ body {
   border: 1px solid var(--surface-border);
   border-radius: 16px;
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  overflow: hidden;
 }
 
 .title-gradient {
@@ -117,6 +118,8 @@ body {
   outline: none;
   transition: all 0.2s ease;
   font-size: 1rem;
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
 .form-control:focus {
@@ -189,4 +192,44 @@ body {
 .toast.success {
   background: var(--success);
   color: white;
+}
+
+.magic-btn {
+  background: linear-gradient(135deg, #a855f7 0%, #ec4899 100%);
+  color: white;
+  padding: 0.4rem 0.8rem;
+  font-size: 0.85rem;
+  border-radius: 6px;
+  box-shadow: 0 4px 14px 0 rgba(168, 85, 247, 0.39);
+}
+
+.magic-btn:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(236, 72, 153, 0.4);
+}
+
+.magic-btn:disabled {
+  filter: grayscale(100%);
+  opacity: 0.7;
+}
+
+.btn-secondary {
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  border: 1px solid var(--surface-border);
+}
+
+.btn-secondary:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.btn-print {
+  background: var(--success);
+  color: white;
+  box-shadow: 0 4px 14px 0 rgba(16, 185, 129, 0.39);
+}
+
+.btn-print:hover:not(:disabled) {
+  background: #059669;
+  transform: translateY(-2px);
 }

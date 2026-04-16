@@ -1,81 +1,123 @@
-<div class="animate-slide-up">
-  <h1 class="title-gradient mb-4">Área de Faturamento</h1>
+<div class="page-wrapper animate-slide-up">
+  <h1 class="title-gradient page-title">Área de Faturamento</h1>
   
-  <div class="glass-panel p-6 mb-6">
-    <h2 class="text-lg font-semibold mb-4 text-primary">Abrir Nova Nota Fiscal</h2>
+  <!-- FORMULÁRIO DE NOVA NOTA -->
+  <div class="glass-panel card">
+    <h2 class="card-title">Abrir Nova Nota Fiscal</h2>
     
     <form [formGroup]="invoiceForm" (ngSubmit)="onSubmit()">
       <div formArrayName="items">
-        <div *ngFor="let item of items.controls; let i=index" [formGroupName]="i" class="form-grid mb-4">
-          <div class="form-group span-2">
+        <div *ngFor="let item of items.controls; let i=index" [formGroupName]="i" class="item-row">
+          <div class="field field-product">
             <label>Produto</label>
             <select formControlName="product_code" class="form-control">
-              <option value="" disabled selected>Selecione o produto...</option>
-              <option *ngFor="let p of products" [value]="p.code">{{ p.code }} (Saldo Atualizado: {{ p.balance }})</option>
+              <option value="" disabled selected>Selecione um produto...</option>
+              <option *ngFor="let p of products" [value]="p.code">{{ p.code }} — {{ p.description | slice:0:40 }} (Saldo: {{ p.balance }})</option>
             </select>
           </div>
           
-          <div class="form-group">
-            <label>Quantidade</label>
+          <div class="field field-qty">
+            <label>Qtd.</label>
             <input type="number" formControlName="quantity" class="form-control" min="1">
           </div>
           
-          <div class="form-group align-end">
-            <button type="button" class="btn btn-danger" (click)="removeItem(i)" *ngIf="items.length > 1">
-              ✖
-            </button>
+          <div class="field field-action">
+            <button type="button" class="btn btn-danger btn-sm" (click)="removeItem(i)" *ngIf="items.length > 1">✖</button>
           </div>
         </div>
       </div>
       
-      <div class="flex-actions mt-4">
+      <div class="form-footer">
         <button type="button" class="btn btn-secondary" (click)="addItem()">+ Adicionar Produto</button>
         <button type="submit" class="btn btn-primary" [disabled]="invoiceForm.invalid || isSubmitting || items.length === 0">
           <div *ngIf="isSubmitting" class="spinner"></div>
-          {{ isSubmitting ? 'Gerando Nota...' : 'Abrir Nota Fiscal' }}
+          {{ isSubmitting ? 'Gerando...' : '📄 Abrir Nota Fiscal' }}
         </button>
       </div>
     </form>
   </div>
 
-  <div class="glass-panel overflow-hidden">
-    <table class="data-table">
-      <thead>
-        <tr>
-          <th>Série NF</th>
-          <th>Status</th>
-          <th>Detalhamento</th>
-          <th>Ações</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let inv of invoices">
-          <td class="font-bold text-lg">#{{ (inv.number || inv.id) | number:'3.0-0' }}</td>
-          <td>
-            <span class="badge" [class.badge-open]="inv.status === 'Aberta'" [class.badge-closed]="inv.status === 'Fechada'">
-               {{ inv.status | uppercase }}
-            </span>
-          </td>
-          <td class="text-secondary text-sm">
-            <div *ngFor="let gItem of inv.items">
-              • {{ gItem.quantity }} und(s) de {{ gItem.product_code }}
-            </div>
-          </td>
-          <td>
-            <button class="btn btn-print" 
-                    [disabled]="inv.status !== 'Aberta' || printProcessing[inv.id || 0]" 
-                    (click)="printInvoice(inv)"
-                    [class.loading]="printProcessing[inv.id || 0]">
-              <div *ngIf="printProcessing[inv.id || 0]" class="spinner"></div>
-              {{ printProcessing[inv.id || 0] ? 'Processando DB...' : '🖨️ Imprimir Nota' }}
-            </button>
-          </td>
-        </tr>
-        <tr *ngIf="invoices.length === 0">
-          <td colspan="4" class="text-center py-4 text-secondary">Nenhuma nota fisca foi aberta. Crie sua primeira nota!</td>
-        </tr>
-      </tbody>
-    </table>
+  <!-- LISTA DE NOTAS -->
+  <div class="glass-panel card">
+    <h2 class="card-title">Notas Fiscais Emitidas</h2>
+    
+    <div class="invoices-list">
+      <div class="invoice-card" *ngFor="let inv of invoices" [class.closed]="inv.status === 'Fechada'">
+        <div class="inv-header">
+          <span class="inv-number">#{{ (inv.number || inv.id) | number:'3.0-0' }}</span>
+          <span class="badge" [class.badge-open]="inv.status === 'Aberta'" [class.badge-closed]="inv.status === 'Fechada'">
+            {{ inv.status | uppercase }}
+          </span>
+        </div>
+        <div class="inv-items">
+          <div *ngFor="let gItem of inv.items" class="inv-item-line">
+            <span class="item-code">{{ gItem.product_code }}</span>
+            <span class="item-qty">× {{ gItem.quantity }}</span>
+          </div>
+        </div>
+        <div class="inv-actions">
+          <button class="btn btn-print" 
+                  [disabled]="inv.status !== 'Aberta' || printProcessing[inv.id || 0]" 
+                  (click)="printInvoice(inv, false)">
+            <div *ngIf="printProcessing[inv.id || 0]" class="spinner"></div>
+            {{ printProcessing[inv.id || 0] ? 'Processando...' : '🖨️ Imprimir Nota' }}
+          </button>
+          <button class="btn btn-warn-outline" 
+                  title="Simula indisponibilidade do serviço de Estoque para demonstrar resiliência"
+                  [disabled]="inv.status !== 'Aberta' || printProcessing[inv.id || 0]" 
+                  (click)="printInvoice(inv, true)">
+            ⚠️ Testar Falha
+          </button>
+        </div>
+      </div>
+
+      <div *ngIf="invoices.length === 0" class="empty-state">
+        📋 Nenhuma nota fiscal emitida. Crie a sua primeira acima!
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: Nota Fiscal Impressa -->
+<div class="print-overlay" *ngIf="printedInvoice" (click)="closePrintModal()">
+  <div class="print-modal" (click)="$event.stopPropagation()">
+    <div class="print-document" id="printArea">
+      <div class="print-header">
+        <div class="print-logo">KORP</div>
+        <div class="print-title">NOTA FISCAL ELETRÔNICA</div>
+        <div class="print-serie">Série NF #{{ printedInvoice.number || printedInvoice.id | number:'3.0-0' }}</div>
+      </div>
+
+      <div class="print-info-row">
+        <div><strong>Status:</strong> FECHADA</div>
+        <div><strong>Data:</strong> {{ printedInvoice.created_at ? (printedInvoice.created_at | date:'dd/MM/yyyy HH:mm') : 'Agora' }}</div>
+      </div>
+
+      <table class="print-table">
+        <thead>
+          <tr>
+            <th>Produto</th>
+            <th>Qtd.</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let item of printedInvoice.items">
+            <td>{{ item.product_code }}</td>
+            <td>{{ item.quantity }}</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="print-footer">
+        <p>Documento gerado eletronicamente pelo Sistema de Faturamento Korp.</p>
+        <p class="print-small">Microsserviços: Angular 17 + Golang (Gin/GORM) — Vitor</p>
+      </div>
+    </div>
+
+    <div class="print-actions no-print">
+      <button class="btn btn-primary" (click)="triggerBrowserPrint()">🖨️ Imprimir / Salvar PDF</button>
+      <button class="btn btn-secondary" (click)="closePrintModal()">Fechar</button>
+    </div>
   </div>
 </div>
 

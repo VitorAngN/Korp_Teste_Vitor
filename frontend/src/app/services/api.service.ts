@@ -33,6 +33,11 @@ export class ApiService {
     );
   }
 
+  generateDescriptionAI(productName: string): Observable<any> {
+    return this.http.post(`${this.stockUrl}/products/ai/generate`, { product_name: productName }).pipe(
+      catchError(this.handleError)
+    );
+  }
 
   loadInvoices(): Observable<Invoice[]> {
     return this.http.get<Invoice[]>(`${this.invoiceUrl}/invoices`).pipe(
@@ -48,8 +53,9 @@ export class ApiService {
     );
   }
 
-  printInvoice(id: number): Observable<any> {
-    return this.http.post(`${this.invoiceUrl}/invoices/${id}/print`, {}).pipe(
+  printInvoice(id: number, simulateFailure: boolean = false): Observable<any> {
+    const headers = { 'X-Simulate-Failure': simulateFailure ? 'true' : 'false' };
+    return this.http.post(`${this.invoiceUrl}/invoices/${id}/print`, {}, { headers }).pipe(
       tap(() => {
         this.loadInvoices().subscribe(); 
         this.loadProducts().subscribe(); 

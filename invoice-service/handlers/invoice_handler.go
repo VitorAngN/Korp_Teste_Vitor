@@ -27,7 +27,12 @@ func CreateInvoice(c *gin.Context) {
 		return
 	}
 
+	// Gerar numeração sequencial (MAX(number) + 1)
+	var lastNumber int
+	database.DB.Model(&models.Invoice{}).Select("COALESCE(MAX(number), 0)").Scan(&lastNumber)
+
 	invoice := models.Invoice{
+		Number: lastNumber + 1,
 		Status: "Aberta", // Garantir o status inicial obrigatório
 		Items:  req.Items,
 	}
@@ -85,9 +90,11 @@ func PrintInvoice(c *gin.Context) {
 		})
 	}
 
+	simulateFailure := c.GetHeader("X-Simulate-Failure") == "true"
+	
 	// Como a chamada HTTP é externa, não seguramos o lock do banco absurdamente
 	// mas mantemos a transação pra só fechar se tudo der certo.
-	err = services.DecrementStock(stockItems)
+	err = services.DecrementStock(stockItems, simulateFailure)
 	if err != nil {
 		tx.Rollback()
 		log.Printf("Falha na impressão da Nota %d. Erro Estoque: %v", invoice.Number, err)

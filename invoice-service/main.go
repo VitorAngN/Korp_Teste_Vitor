@@ -19,8 +19,14 @@ func main() {
 
 	r := gin.Default()
 
-	// Tratamento de CORS básico
-	r.Use(cors.Default())
+	// Tratamento de CORS configurado para aceitar headers customizados (X-Simulate-Failure)
+	r.Use(cors.New(cors.Config{
+		AllowOrigins:     []string{"*"},
+		AllowMethods:     []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"},
+		AllowHeaders:     []string{"Origin", "Content-Type", "Accept", "X-Simulate-Failure"},
+		ExposeHeaders:    []string{"Content-Length"},
+		AllowCredentials: false,
+	}))
 
 	r.GET("/api/invoices", handlers.GetInvoices)
 	r.POST("/api/invoices", handlers.CreateInvoice)

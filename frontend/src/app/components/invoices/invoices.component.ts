@@ -22,6 +22,7 @@ export class InvoicesComponent implements OnInit, OnDestroy {
   printProcessing: { [key: number]: boolean } = {};
   toastMsg = '';
   isErrorToast = false;
+  printedInvoice: Invoice | null = null;
   
   private destroy$ = new Subject<void>();
 
@@ -85,7 +86,7 @@ export class InvoicesComponent implements OnInit, OnDestroy {
     });
   }
 
-  printInvoice(invoice: Invoice) {
+  printInvoice(invoice: Invoice, simulateError: boolean = false) {
     if (invoice.status !== 'Aberta' || !invoice.id) {
        this.showToast("Só é possível imprimir notas com status 'Aberta'.", true);
        return;
@@ -93,16 +94,26 @@ export class InvoicesComponent implements OnInit, OnDestroy {
 
     this.printProcessing[invoice.id] = true;
 
-    this.api.printInvoice(invoice.id).subscribe({
+    this.api.printInvoice(invoice.id, simulateError).subscribe({
       next: () => {
         this.printProcessing[invoice.id!] = false;
+        // Abre o modal com a nota recém-impressa
+        this.printedInvoice = { ...invoice, status: 'Fechada' };
         this.showToast(`Nota Fiscal #${invoice.number || invoice.id} fechada e impressa! Os saldos foram abatidos.`);
       },
       error: (err) => {
         this.printProcessing[invoice.id!] = false;
-        this.showToast(`Erro na Impressão: ${err.message}`, true);
+        this.showToast(`${err.message}`, true);
       }
     });
+  }
+
+  closePrintModal() {
+    this.printedInvoice = null;
+  }
+
+  triggerBrowserPrint() {
+    window.print();
   }
 
   showToast(msg: string, error: boolean = false) {
@@ -111,3 +122,4 @@ export class InvoicesComponent implements OnInit, OnDestroy {
     setTimeout(() => this.toastMsg = '', 6000);
   }
 }
+
