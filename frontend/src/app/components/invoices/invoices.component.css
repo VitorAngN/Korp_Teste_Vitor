@@ -7,14 +7,16 @@
 /* ======= Formulário de Itens ======= */
 .item-row {
   display: flex;
-  gap: 0.75rem;
+  flex-wrap: wrap;
+  gap: 1rem;
   align-items: flex-end;
   background: rgba(0, 0, 0, 0.15);
-  padding: 0.75rem;
-  border-radius: 8px;
-  margin-bottom: 0.75rem;
+  padding: 1rem;
+  border-radius: 12px;
+  margin-bottom: 1rem;
   width: 100%;
   box-sizing: border-box;
+  border: 1px solid rgba(255, 255, 255, 0.03);
 }
 
 .field {
@@ -25,13 +27,25 @@
   display: block;
   font-size: 0.8rem;
   color: var(--text-secondary);
-  margin-bottom: 0.35rem;
+  margin-bottom: 0.5rem;
   font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 1px;
 }
 
-.field-product { flex: 1; min-width: 0; }
-.field-qty { width: 70px; flex-shrink: 0; }
-.field-action { flex-shrink: 0; padding-bottom: 2px; }
+.field-product { 
+  flex: 3 1 300px; /* Cresce 3x, encolhe, base de 300px */
+  min-width: 0; 
+}
+
+.field-qty { 
+  flex: 0 0 100px; /* Fixo 100px */
+}
+
+.field-action { 
+  flex-shrink: 0; 
+  padding-bottom: 4px;
+}
 
 .field-product select,
 .field-product input,
@@ -40,6 +54,18 @@
   max-width: 100%;
   box-sizing: border-box;
   text-overflow: ellipsis;
+  min-height: 45px;
+}
+
+@media (max-width: 768px) {
+  .item-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .field-product, .field-qty {
+    flex: 1 1 100%;
+    width: 100%;
+  }
 }
 
 .btn-sm {
