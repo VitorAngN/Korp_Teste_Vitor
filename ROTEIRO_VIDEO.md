@@ -24,7 +24,7 @@
 
 > "Para o cadastro, temos os campos obrigatórios: Código, Descrição e Saldo. Mas aqui eu implementei um **requisito opcional de Inteligência Artificial**."
 
-**[Ação: Clicar no botão roxo '✨ Auto-preencher (IA)' — esperar o loader girar — a descrição vai aparecer sozinha]**
+**[Ação: Clicar no botão roxo '✨ IA' — esperar o loader girar — a descrição vai aparecer sozinha no campo abaixo]**
 
 > "Ao invés do usuário digitar a descrição manualmente, ele pode clicar nesse botão. O Angular faz uma chamada HTTP ao meu endpoint `POST /api/products/ai/generate` no backend Go. O texto é gerado automaticamente com contexto corporativo, simulando a integração com um modelo de linguagem."
 >
@@ -64,15 +64,19 @@
 
 > "Agora o fluxo mais importante: a **Impressão**."
 
-**[Ação: Clicar no botão verde '🖨️ Imprimir']**
+**[Ação: Clicar no botão verde '🖨️ Imprimir Nota']**
 
 > "Ao clicar em Imprimir, o Angular mostra um indicador de processamento. No backend, o Faturamento inicia uma **transação ACID** e chama o microsserviço de Estoque via HTTP para abater os saldos."
 >
 > "Esse abatimento é **atômico** — a query SQL usa `UPDATE balance = balance - X WHERE balance >= X`. Isso previne saldo negativo e trata completamente o requisito opcional de **Concorrência**. Se duas notas tentarem usar o último item simultaneamente, apenas uma vai conseguir."
 
-**[O toast verde aparece e o status muda para "Fechada"]**
+**[O toast verde aparece, status muda para "Fechada", e um MODAL com a Nota Fiscal formatada aparece na tela]**
 
-> "O status atualiza para 'Fechada'. E reparem: notas fechadas não podem ser impressas novamente. Isso é **Idempotência** — outro requisito opcional que implementei."
+> "Reparem que ao confirmar a impressão, o sistema abre um **modal com a Nota Fiscal Eletrônica** formatada — com logotipo KORP, série, data, e a tabela de itens. O usuário pode clicar em 'Imprimir / Salvar PDF' para gerar um documento real usando o `window.print()` do navegador."
+>
+> "E reparem: notas com status 'Fechada' não podem ser impressas novamente. Isso é **Idempotência** — outro requisito opcional que implementei."
+
+**[Ação: Fechar o modal clicando em 'Fechar']**
 
 **[Ação: Navegar até "Em Estoque" e mostrar os saldos atualizados]**
 
@@ -86,9 +90,9 @@
 
 > "Agora vou demonstrar o requisito **obrigatório** de tratamento de falhas entre microsserviços."
 
-**[Ação: Na nova nota (status Aberta), clicar no botão VERMELHO '⚠️ Simular Queda']**
+**[Ação: Na nova nota (status Aberta), clicar no botão amarelo '⚠️ Testar Falha']**
 
-> "Esse botão injeta um Header HTTP que faz o Faturamento redirecionar a chamada para uma porta inexistente, simulando que o serviço de Estoque caiu."
+> "Esse botão injeta um Header HTTP customizado `X-Simulate-Failure: true` que faz o Faturamento redirecionar a chamada para uma porta inexistente (9999), simulando que o serviço de Estoque caiu."
 
 **[Ação: Apontar para o terminal do invoice-service enquanto espera — lá vai aparecer as mensagens de retry]**
 
