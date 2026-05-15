@@ -24,11 +24,12 @@ Acesse a apresentação em vídeo do sistema e resumo das funcionalidades:
 
 Você precisa do **Docker** e do **Go** instalados na sua máquina.
 
-1. **Subir o Banco de Dados:**
+1. **Subir o Banco de Dados PostgreSQL:**
    Na raiz do projeto (onde está o `docker-compose.yml`), rode:
    ```bash
    docker-compose up -d
    ```
+   Os serviços usam a variável `DATABASE_URL`. Se ela não estiver configurada ou o PostgreSQL estiver indisponível, o projeto cai para SQLite local como fallback de desenvolvimento.
 2. **Rodar Serviço de Estoque (Porta 8081):**
    ```bash
    cd stock-service

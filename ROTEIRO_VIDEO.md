@@ -118,7 +118,7 @@
 >
 > "**Golang:** Gerenciamento via Go Modules independentes por microsserviço. Framework **Gin** para roteamento HTTP e **GORM** como ORM com driver SQLite para persistência real. Erros e exceções são tratados com transações ACID, `defer tx.Rollback()`, e respostas HTTP semânticas — 404 para não encontrado, 409 para saldo insuficiente, 503 para indisponibilidade de serviço."
 >
-> "Obrigado pela oportunidade! O repositório está público no GitHub: `Korp_Teste_Vitor`. Qualquer dúvida, estou à disposição."
+> "Obrigado pela oportunidade! O repositório está público no GitHub: `invoice-microservices-go`. Qualquer dúvida, estou à disposição."
 
 ---
 
